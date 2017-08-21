@@ -12,12 +12,23 @@ RUN apt-get update &&\
 # Dependencies
 RUN apt-get update &&\
     apt-get install -y \
+        # Jekyll
         ruby \
         ruby-dev \
         make \
         gcc \
+        # github-pages dependencies
+        nodejs \
+        # nokogiri dependencies
+        libxml2-dev \
+        libxslt-dev \
+        pkg-config \
         &&\
     rm -rf /var/lib/apt/lists/*
+
+# Nokogiri doesn't build with its own libraries. Force using system's libraries as workaround
+# http://www.nokogiri.org/tutorials/installing_nokogiri.html#using_your_system_libraries
+ENV NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 
 RUN gem install \
         jekyll \
