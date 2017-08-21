@@ -79,20 +79,31 @@ This repository is a template, something you can use as starting point to develo
 There are two branches:
 
 * `master`: it contains the template
-* `gh-pages`: it is an orphan branch that contains a copy of the `/jekyll` folder present in the `master` branch, and it serves as demo website
+* `gh-pages`: it is an orphan branch that contains a demo website
 
-The maintainers of this repository should commit in the `master` branch all the developed files and configurations (the `/jekyll` folder). The `gh-pages` branch should instead be populated only by the files contained in `/jekyll`, that may or may not contain the `/_site` folder depending if you want to let GitHub generate the website by their servers.
+GitHub Pages officially supports only a [limited amount of Jekyll plugins](https://help.github.com/articles/adding-jekyll-plugins-to-a-github-pages-site/). This might be a constraint for many applications, and there the usage of this limited set affects how the `gh-pages` branch is used:
 
-We can exploit `subtree` in order to quickly commit in `gh-pages` only a subfolder of the `master` branch:
+1. *Using official plugins:* The `gh-pages` branch contains the `/jekyll` folder, and the generation of the website is performed remotely
+2. *Using other plugins:* The `gh-pages` branch contains the `/jekyll/_site` folder generated locally, and a `.nojekyll` file must be present
 
-```
+The maintainers of this repository should commit in the `master` branch all the developed files and configurations (the `/jekyll` folder). The `gh-pages` branch should instead be populated only by the correct folder depending on the plugins choice just described.
+
+We can exploit `subtree` in order to quickly commit in `gh-pages` only a subfolder of the `master` branch
+
+#### Remote generation
+```sh
+# Normal push
 git subtree push --prefix jekyll origin gh-pages
-```
-
-For future reference, the command for a force push of a subtree is:
-
-```
+# For future reference, a force push
 git push origin `git subtree split --prefix jekyll master`:gh-pages --force
+```
+
+#### Local generation
+```sh
+# Normal push
+git subtree push --prefix jekyll/_site origin gh-pages
+# For future reference, a force push
+git push origin `git subtree split --prefix jekyll/_site master`:gh-pages --force
 ```
 
 ### A website that uses this template
@@ -103,7 +114,10 @@ The main advantage of having a template that can be used for many websites is th
 
 The git structure of the `username.github.io` repository we are currently using, keeping in mind that we want to have an easy way to maintain it aligned with possible infrastructure improvement provided by the template, is the following:
 
-* `master`: the actual website (that as for the demo, may or may not contain the `/_site` folder)
+* `master`: the `template` branch plus posts and the website theme
 * `template`: a mirror of `jekyll-template:master`
+* `gh-pages`: the subtree containing the `jekyll` or `jekyll/_site` folder
+
+Optionally, an additional `devel` branch can be used to stage commits before reaching `master`.
 
 For every new commit in `jekyll-template`, the mirror `username.github.io:template` should be updated, and `username.github.io:master` rebased on top of it. If the infrastructure and theme plus posts are kept enough independent, conflicts should be rare.
