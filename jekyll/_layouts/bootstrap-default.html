@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+
+{% include bootstrap-head.html %}
+
+<body>
+
+    {% include bootstrap-header.html %}
+
+    <div class="container">
+        <div class="row">
+            {{ content }}
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+
+    {% include bootstrap-footer.html %}
+
+</body>
+
+</html>

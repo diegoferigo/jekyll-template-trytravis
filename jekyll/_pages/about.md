@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: bootstrap-post
 title: About
 permalink: /about/
 ---
