@@ -37,6 +37,16 @@ RUN gem install \
     gem clean &&\
     jekyll -v
 
+# Fix ruby and unset locale
+# http://jaredmarkell.com/docker-and-locales/
+RUN apt-get update &&\
+    apt-get install -y \
+        locales \
+        &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    locale-gen en_US.UTF-8
+ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en" LC_ALL="en_US.UTF-8"
+
 EXPOSE 4000
 
 # Setup an entrypoint script

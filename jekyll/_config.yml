@@ -29,9 +29,36 @@ markdown: kramdown
 # theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-assets
+  - jekyll-tidy
 
 include:
   - '_pages'
+
+# jekyll-tidy configuration
+jekyll_tidy:
+  compress_html: false
+
+# jekyll-assets configuration
+assets:
+  compress:
+    js: true
+    css: true
+  prefix: /assets
+  features:
+    liquid: true
+  assets:
+    - "bootstrap.js"
+    - "popper.js"
+    - "blog.scss"
+    - "main.scss"
+  digest: true
+  sources:
+    - _assets/css
+    - _assets/scss
+    - _assets/images
+    - _vendor/bundle/ruby/2.3.0/gems/bootstrap-4.0.0.beta/assets/javascripts/
+    - _vendor/bundle/ruby/2.3.0/gems/popper_js-1.11.1/assets/javascripts/
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
