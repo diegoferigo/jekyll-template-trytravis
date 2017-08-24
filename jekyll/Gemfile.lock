@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/diegoferigo/jekyll-jupyter-notebook.git
+  revision: dd0757137257e03f3ea67f644af5733bbaf6e32f
+  branch: customCSS
+  specs:
+    jekyll-jupyter-notebook (0.0.2)
+      jekyll
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -243,6 +251,7 @@ DEPENDENCIES
   github-pages
   jekyll-assets
   jekyll-feed (~> 0.6)
+  jekyll-jupyter-notebook!
   jekyll-tidy
   minima (~> 2.0)
   tzinfo-data

@@ -66,7 +66,7 @@ case "$@" in
     build)
         setup_bundler_local
         cd $WWW_DIR
-        bundle exec jekyll build
+        bundle exec jekyll build --trace
         cd - &>/dev/null
         ;;
     *)

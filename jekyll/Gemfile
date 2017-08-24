@@ -29,3 +29,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap', '~> 4.0.0.beta', group: :jekyll_plugins
 gem 'jekyll-assets', group: :jekyll_plugins
 gem 'jekyll-tidy', group: :jekyll_plugins
+gem 'jekyll-jupyter-notebook', :git => 'https://github.com/diegoferigo/jekyll-jupyter-notebook.git', :branch => 'customCSS', group: :jekyll_plugins

@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+ FROM ubuntu:rolling
 MAINTAINER Diego Ferigo <diego.ferigo@iit.it>
 
 # Useful tools
@@ -6,6 +6,7 @@ RUN apt-get update &&\
     apt-get install -y \
         tree \
         sudo \
+        git \
         &&\
     rm -rf /var/lib/apt/lists/*
 
@@ -46,6 +47,14 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/* &&\
     locale-gen en_US.UTF-8
 ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en" LC_ALL="en_US.UTF-8"
+
+# Jupyter Notebooks support
+RUN apt-get update &&\
+    apt-get install -y \
+        jupyter-core \
+        jupyter-nbconvert \
+        &&\
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 4000
 
