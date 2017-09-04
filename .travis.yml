@@ -1,0 +1,75 @@
+sudo: required
+dist: trusty
+
+services:
+  - docker
+
+os:
+  - linux
+
+env:
+  global:
+    # Website configuration
+    - JEKYLL_FOLDER="$TRAVIS_BUILD_DIR/jekyll"
+    - JEKYLL_SITE_FOLDER="$JEKYLL_FOLDER/_site"
+    # Deploy configuration
+    - BOT_USER_NAME="loc2bot"
+    - UPSTREAM_TRIGGERING_BRANCH="master"
+    - DEPLOY_BRANCH="gh-pages"
+    - DEPLOY_REPOSITORY=$TRAVIS_REPO_SLUG
+    - DOCKER_BUILD_IMAGE="diegoferigo/jekyll"
+
+before_install:
+  # Pull the docker image
+  - docker pull $DOCKER_BUILD_IMAGE || travis_terminate 1
+  # Check if the generation is necessary
+  - >-
+    if [ -e $JEKYLL_FOLDER/.nojekyll ] ; then
+      export JEKYLL_GENERATE_LOCALLY=true
+      export DEPLOY_FOLDER=$JEKYLL_SITE_FOLDER
+      ls -al $TRAVIS_BUILD_DIR
+      ls -al $JEKYLL_FOLDER
+    else
+      export JEKYLL_GENERATE_LOCALLY=false
+      export DEPLOY_FOLDER=$JEKYLL_FOLDER
+    fi
+
+script:
+  # Check the existence of the JEKYLL_SITE_FOLDER
+  - ls $JEKYLL_SITE_FOLDER >/dev/null
+  # Build the website
+  # (the image handles all permission issues may arise)
+  - >-
+    if [ $JEKYLL_GENERATE_LOCALLY = true ] ; then
+      docker run -it --rm \
+                 -v $JEKYLL_FOLDER:/srv/jekyll/www:rw \
+                 -p 4000:4000 \
+                 -e USERNAME=`whoami` \
+                 -e USER_UID=`id -u` \
+                 -e USER_GID=`id -g` \
+                 --name jekyll \
+                 $DOCKER_BUILD_IMAGE \
+                 build || travis_terminate 1
+    fi
+
+after_success:
+  # Deploy only commits hitting the upstream master
+  - DEPLOY_TOKEN="test"
+  - >-
+    if [[ $TRAVIS_BRANCH = $UPSTREAM_TRIGGERING_BRANCH && \
+          $TRAVIS_PULL_REQUEST = false && \
+          -n $DEPLOY_TOKEN ]] ; then
+      # Add a new remote containing the bot login credentials
+      cd $TRAVIS_BUILD_DIR
+      git remote add origin-botlogin https://$BOT_USER_NAME:$DEPLOY_TOKEN@github.com/$DEPLOY_REPOSITORY.git
+      # Get the SHA of the last commit
+      TRAVIS_COMMIT_SHA=$(git rev-parse HEAD)
+      git commit -m "Automatic deployment Travis#${TRAVIS_BUILD_NUMBER}" \
+                 -m "Commit: [https://github.com/$TRAVIS_REPO_SLUG/commit/$TRAVIS_COMMIT_SHA] $TRAVIS_COMMIT" \
+                 -- $DEPLOY_FOLDER
+      git log -2 > file && cat file && rm file
+      # Push the site folder to the upstream deployment branch
+      git subtree push --prefix $DEPLOY_FOLDER origin-botlogin $DEPLOY_BRANCH
+    else
+      echo "Nothing to deploy"
+    fi
